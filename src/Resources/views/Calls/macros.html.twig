@@ -1,42 +1,45 @@
-{% macro render_headers(headers, uri) %}
+{% macro render_message(message) %}
+    {% from _self import render_value as render_value %}
     <h4>Headers</h4>
     <table>
         <thead>
-            <tr>
-                <th scope="col" class="key">Header</th>
-                <th scope="col">Value</th>
-            </tr>
+        <tr>
+            <th scope="col" class="key">Header</th>
+            <th scope="col">Value</th>
+        </tr>
         </thead>
-        {% for header, values in headers %}
+        {% for header, values in message.headers %}
             <tr>
                 <td>{{ header }}</td>
                 <td>
                     {% if values|length > 1 %}
-                    <ul>
-                        {% for value in values %}
-                            <li>{{ value }}</li>
-                        {% endfor %}
-                    </ul>
+                        <ul>
+                            {% for value in values %}
+                                <li>{{ render_value(value) }}</li>
+                            {% endfor %}
+                        </ul>
                     {% else %}
-                        {% if header == 'X-Debug-Token-Link' %}
-                            <a href="{{ values.0 }}" target="_blank">{{ values.0 }}</a>
-                        {% else %}
-                            {{ values.0 }}
-                        {% endif %}
+                        {{ render_value(values.0) }}
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
     </table>
-{% endmacro %}
 
-{% macro render_body(body) %}
-    {% if body is not empty %}
+    {% if message.body is not empty %}
         <h4>Content</h4>
 
-        {% set lang = csa_guzzle_detect_lang(body) %}
+        {% set lang = csa_guzzle_detect_lang(message.headers, message.body) %}
 
-        <pre><code class="language-{{ lang }}">{{ body|csa_guzzle_pretty_print(lang) }}</code></pre>
+        <pre><code class="language-{{ lang }}">{{ message.body|csa_guzzle_pretty_print(lang) }}</code></pre>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_value(value) %}
+    {% if value matches '#^http://#' %}
+        <a href="{{ value }}">{{ value }}</a>
+    {% else %}
+        {{ value }}
     {% endif %}
 {% endmacro %}
 

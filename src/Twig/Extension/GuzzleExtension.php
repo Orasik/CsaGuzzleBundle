@@ -35,11 +35,15 @@ class GuzzleExtension extends \Twig_Extension
         ];
     }
 
-    public function detectLang($body)
+    public function detectLang($headers, $body)
     {
+        $contentType = isset($headers['Content-Type']) ? $headers['Content-Type'][0]:'';
+
         switch (true) {
+            case false !== strpos($contentType, 'xml'):
             case 0 === strpos($body, '<?xml'):
                 return 'xml';
+            case false !== strpos($contentType, 'json'):
             case 0 === strpos($body, '{'):
             case 0 === strpos($body, '['):
                 return 'json';

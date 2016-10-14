@@ -34,8 +34,7 @@
                         <h3 class="tab-title">Request</h3>
                         <div class="tab-content">
                             {{ macros.render_infos(call.info) }}
-                            {{ macros.render_headers(call.request.headers, call.uri) }}
-                            {{ macros.render_body(call.request.body) }}
+                            {{ macros.render_message(call.request) }}
                             {% if call.curl is defined %}
                                 {{ macros.render_curl(call.curl) }}
                             {% endif %}
@@ -45,8 +44,7 @@
                         <div class="tab">
                             <h3 class="tab-title">Response</h3>
                             <div class="tab-content">
-                                {{ macros.render_headers(call.response.headers, call.uri) }}
-                                {{ macros.render_body(call.response.body) }}
+                                {{ macros.render_message(call.response) }}
                             </div>
                         </div>
                     {% endif %}
